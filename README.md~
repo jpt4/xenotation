@@ -1,0 +1,14 @@
+tic-xenotation
+
+Transliteration between tic-xenotation and Arabic numerals.
+
+Current status: transliterate xeno -> Arabic, not yet the inverse.
+
+Requirements:
+
+Chez Scheme - https://cisco.github.io/ChezScheme/
+
+xeno.scm
+
+
+(x->
