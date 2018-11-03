@@ -5,6 +5,13 @@
 
 ; :::::: -> '(::::::) : -> '(:) (:) -> '((:))
 
+#|
+(define (xgrp? g)
+  (cond
+   [(equal? ': g) #t]
+   [(equal (car g
+|#
+
 (define (separate-tics tic-symbol)
   (map (lambda (a) 
 	 (string->symbol (list->string (list a)))) 
@@ -37,30 +44,14 @@
   (list-tail (iota (+ m 1)) n))
 
 ;generate primes <= n
-(define (generate-primes n . p)
-  (reverse
-   (letrec* 
-       ([primels (if (null? p) '(2) (reverse (car p)))]
-	[sieve-maximum (expt (car primels) 2)]
-	[loop 
-	 (lambda (pls sieve-max)
-	   (define (loop-aux range-max)
-	     (append (fold-right 
-		      (lambda (sieve sand) 
-			(filter (lambda (a) 
-				  (not (zero? (modulo a sieve))))
-				sand)) 
-		      (reverse (range (car pls) range-max)) pls)
-		     pls))
-	   (cond
-	    [(<= sieve-max n)
-	     (let ([newpls
-		    (loop-aux sieve-max)])
-	       (loop newpls (expt (car newpls) 2)))]
-	    [(and (<= (car pls) n) (< n sieve-max))     
-	     (loop-aux n)]
-	    [(< xn (car pls))
-	     (remp (lambda (a) (> a n)) pls)]
-	    ))])
-     (loop primels sieve-maximum))))
-  
+(define (generate-primes n)
+  (let loop ([ind 2]
+	     [pls '(2)]
+	     [seive-max (expt (car pls) 2)])
+    (if (<= ind n)
+	(fold-right 
+	 (lambda (seive sand) 
+	   (filter (lambda (a) (not (zero? (modulo a seive)))) 
+		   sand)) 
+	 (reverse (range a b)) pls)
+)))
