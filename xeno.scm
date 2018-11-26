@@ -77,6 +77,23 @@
   (let ([num-vec (list->vector (iota (+ 1 n)))])
     (let inc-loop ([inc 2])
       (if (> inc (floor (sqrt n)))
+	  ;return
+	  (let ([primes '()])
+	    (vector-for-each (lambda (a) (if (not (equal? 'c a))
+					     (set! primes (cons a primes))))
+			     num-vec)
+	    (cddr (reverse primes)))			   
+	  (let ind-loop ([ind (+ inc inc)])
+	    (cond
+	     [(> ind n) (inc-loop (+ 1 inc))]
+	     [(vector-set! num-vec ind 'c) (ind-loop (+ ind inc))])
+	    )))
+    ))
+
+(define (eratosthenes-old n)
+  (let ([num-vec (list->vector (iota (+ 1 n)))])
+    (let inc-loop ([inc 2])
+      (if (> inc (floor (sqrt n)))
 	  (vector->list num-vec)
 	  (let ind-loop ([ind (+ inc inc)])
 	    (cond
@@ -85,14 +102,54 @@
 	    )))
     (filter (lambda (a) (not (equal? 'c a))) (cddr (vector->list num-vec)))))
 
+;vectorize eratosthenes
+(define (eratosthenes-vec1 n)
+  (let ([num-vec (list->vector (iota (+ 1 n)))])
+    (let inc-loop ([inc 2])
+      (if (> inc (floor (sqrt n)))
+	  ;return
+	  (filter (lambda (a) (not (equal? 'c a))) (cddr (vector->list num-vec)))
+	  (let ind-loop ([ind (+ inc inc)])
+	    (cond
+	     [(> ind n) (inc-loop (+ 1 inc))]
+	     [(vector-set! num-vec ind 'c) (ind-loop (+ ind inc))])
+	    )))
+    ))
+
+(define (eratosthenes-vec2 n)
+  (let ([num-vec (list->vector (iota (+ 1 n)))])
+    (let inc-loop ([inc 2])
+      (if (> inc (floor (sqrt n)))
+	  ;return
+	  (let ([primes '()])
+	    (vector-for-each (lambda (a) (if (not (equal? 'c a))
+					     (set! primes (cons a primes))))
+			     num-vec)
+	    (cddr (reverse primes)))			   
+	  (let ind-loop ([ind (+ inc inc)])
+	    (cond
+	     [(> ind n) (inc-loop (+ 1 inc))]
+	     [(vector-set! num-vec ind 'c) (ind-loop (+ ind inc))])
+	    )))
+    ))
+
 ;tests
 (define (tster m)
   (car (time (eratosthenes m))))
+(define (tste1 n)
+  (car (time (eratosthenes-vec1 n))))
+(define (tste2 n)
+  (car (time (eratosthenes-vec2 n))))	       
 (define (tstgp n . p)
   (car (time (generate-primes-unto-limit n p))))
+
 (define (prime-proc-tests n)
   (begin
     (display (tster n))
+    (newline)
+    (display (tste1 n))
+    (newline)
+    (display (tste2 n))
     (newline)
     (display (tstgp n 2))
     (newline)))
