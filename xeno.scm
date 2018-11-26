@@ -23,12 +23,19 @@
 
 (define (look-up-index i) (list-ref new-primes (- i 1)))
 
+(define (prime-index i)
+  (if (> i (length new-primes))
+      (set! new-primes 
+	(generate-primes 
+	 (expt (list-ref new-primes (- (length new-primes) 1)) 2)))
+      (list-ref new-primes (- i 1))))
+
 ; ::(:) -> '(: : (:))
 (define (x->a x)
   (cond
    [(null? x) 1]
    [(equal? (car x) ':) (* 2 (x->a (cdr x)))]
-   [(null? (cdr x)) (look-up-index (x->a (car x)))]
+   [(null? (cdr x)) (prime-index (x->a (car x)))]
    [(not (null? (cdr x))) (* (x->a (list (car x))) (x->a (cdr x)))]
    ))
 
@@ -37,7 +44,7 @@
   (list-tail (iota (+ m 1)) n))
 
 ;generate primes <= n
-(define (generate-primes n . p)
+(define (generate-primes-unto-limit n . p)
   (reverse
    (letrec* 
        ([primels (if (null? p) '(2) (reverse (car p)))]
@@ -64,3 +71,29 @@
 	    ))])
      (loop primels sieve-maximum))))
   
+;sieve of eratosthenes
+;primes [2, n]
+(define (eratosthenes n)
+  (let ([num-vec (list->vector (iota (+ 1 n)))])
+    (let inc-loop ([inc 2])
+      (if (> inc (floor (sqrt n)))
+	  (vector->list num-vec)
+	  (let ind-loop ([ind (+ inc inc)])
+	    (cond
+	     [(> ind n) (inc-loop (+ 1 inc))]
+	     [(vector-set! num-vec ind 'c) (ind-loop (+ ind inc))])
+	    )))
+    (filter (lambda (a) (not (equal? 'c a))) (cddr (vector->list num-vec)))))
+
+;tests
+(define (tster m)
+  (car (time (eratosthenes m))))
+(define (tstgp n . p)
+  (car (time (generate-primes-unto-limit n p))))
+(define (prime-proc-tests n)
+  (begin
+    (display (tster n))
+    (newline)
+    (display (tstgp n 2))
+    (newline)))
+
