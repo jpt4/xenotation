@@ -9,6 +9,32 @@
   (map (lambda (a) 
 	 (string->symbol (list->string (list a)))) 
        (string->list (symbol->string tic-symbol))))
+#|
+
+(separate-tics (string->symbol ":::(((:)::)(::))"))
+(: : : \x28; \x28; \x28; : \x29; : : \x29; \x28; : : \x29;
+   \x29;)
+
+(map (lambda (a) (if (not (equal? ': a)) (symbol->string a) a)) (separate-tics (string->symbol ":::(((:)::)(::))")))
+(: : : "(" "(" "(" : ")" : : ")" "(" : : ")" ")")
+
+(define (sanitize-input xeno)
+  (let loop ([xexp (list xeno)])
+    (cond
+     [(null? xexp) '()]
+     [(symbol? xexp) (separate-tics xexp)]
+     []
+|#
+
+(define (separate-tics* ts)
+  (cond
+   [(null? ts) '()]
+   [(symbol? ts) (separate-tics ts)]
+   [(symbol? (car ts)) (cons (separate-tics* (car ts)) (separate-tics* (cdr ts)))]
+   [(pair? (car ts)) (cons (cons (separate-tics* (caar ts)) (separate-tics* (cdar ts)))
+			   (separate-tics* (cdr ts)))]
+   ))
+
 
 ;sieve of eratosthenes
 ;primes [2, n]
@@ -44,7 +70,7 @@
 	     [(> ind n) (inc-loop (+ 1 inc))]
 	     [(vector-set! num-vec ind 'c) (ind-loop (+ ind inc))])
 	    )))
-    )
+    ))
 
 (define primes-list (eratosthenes 1000))
 
