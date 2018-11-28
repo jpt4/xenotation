@@ -60,8 +60,8 @@
   (if (> i (length primes-list))
       (begin
       (set! primes-list
-	(eratosthenes (square (last-element primes-list))))
-      (list-ref primes-list (- i 1)))
+	(eratosthenes (* (last-element primes-list) 2)))
+      (prime-index1 i))
       (list-ref primes-list (- i 1))))
 
 ; ::(:) -> '(: : (:))
@@ -159,6 +159,7 @@
     ))
 
 ;tests
+(define (aktst) (x->a1 '((: : : : : : : ((:)) (: : :) (((: :)))))))
 (define (tster m)
   (car (time (eratosthenes m))))
 (define (tste1 n)
