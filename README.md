@@ -17,14 +17,23 @@ guix package -i chez-scheme
 Usage:
 
 $ git clone https://www.github.com/jpt4/tic-xenotation
+
 $ cd tic-xenotation
+
 $ chez-scheme
-\> (load "xeno.scm")
-\> (x->a '(:))
+
+(load "xeno.scm")
+
+(x->a '(:))
+
 2
-\> (x->a '(: :))
+
+(x->a '(: :))
+
 4
-\> (x->a '(: (: :)))
+
+(x->a '(: (: :)))
+
 14
 
 Notes: 
@@ -42,12 +51,14 @@ Examples:
 
 :(:) -> '(: (:))
 
-> (x->a '(: (:)))
+(x->a '(: (:)))
+
 6
 
 (:::::::((:))(:::)(((::)))) -> '((: : : : : : : ((:)) (: : :) (((: :))))))
 
-\> (x->a '((: : : : : : : ((:)) (: : :) (((: :))))))
+(x->a '((: : : : : : : ((:)) (: : :) (((: :))))))
+
 10852909
 
 Passes the Akira test.
