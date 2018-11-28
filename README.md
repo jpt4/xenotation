@@ -19,12 +19,12 @@ Usage:
 $ git clone https://www.github.com/jpt4/tic-xenotation
 $ cd tic-xenotation
 $ chez-scheme
-> (load "xeno.scm")
-> (x->a '(:))
+\> (load "xeno.scm")
+\> (x->a '(:))
 2
-> (x->a '(: :))
+\> (x->a '(: :))
 4
-> (x->a '(: (: :)))
+\> (x->a '(: (: :)))
 14
 
 Notes: 
@@ -47,9 +47,7 @@ Examples:
 
 (:::::::((:))(:::)(((::)))) -> '((: : : : : : : ((:)) (: : :) (((: :))))))
 
-> (x->a '((: : : : : : : ((:)) (: : :) (((: :))))))
-Exception in list-ref: index 717439 is out of range for list (2 3 5 7 11 13 ...)
-Type (debug) to enter the debugger.
+\> (x->a '((: : : : : : : ((:)) (: : :) (((: :))))))
+10852909
 
-[Because the prime list is currently hardcoded, and does not grow
-automatically. TODO]
+Passes the Akira test.
