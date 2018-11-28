@@ -29,6 +29,23 @@
 	    )))
     ))
 
+(define (era2 n)
+  (let ([num-vec (list->vector (iota (+ 1 n)))])
+    (let inc-loop ([inc 2])
+      (if (> inc (floor (sqrt n)))
+	  ;return
+	  (let ([primes '()])
+	    (vector-for-each (lambda (a) (if (not (equal? 'c a))
+					     (set! primes (cons a primes))))
+			     num-vec)
+	    (cddr (reverse primes)))			   
+	  (let ind-loop ([ind (+ inc inc)])
+	    (cond
+	     [(> ind n) (inc-loop (+ 1 inc))]
+	     [(vector-set! num-vec ind 'c) (ind-loop (+ ind inc))])
+	    )))
+    )
+
 (define primes-list (eratosthenes 1000))
 
 ;last element of a list
