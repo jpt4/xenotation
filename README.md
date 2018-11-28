@@ -1,6 +1,8 @@
 tic-xenotation
 
-Transliteration between tic-xenotation and Arabic numerals.
+Transliteration between tic-xenotation [0] and Arabic numerals.
+
+[0] hyperstition.abstractdynamics.org/archives/003538.html
 
 Current status: transliterate xeno -> Arabic, not yet the inverse.
 
