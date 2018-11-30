@@ -5,26 +5,19 @@
 
 ; :::::: -> '(::::::) : -> '(:) (:) -> '((:))
 
+;symbol -> list
 (define (separate-tics tic-symbol)
   (map (lambda (a) 
 	 (string->symbol (list->string (list a)))) 
        (string->list (symbol->string tic-symbol))))
-#|
 
-(separate-tics (string->symbol ":::(((:)::)(::))"))
-(: : : \x28; \x28; \x28; : \x29; : : \x29; \x28; : : \x29;
-   \x29;)
-
-(map (lambda (a) (if (not (equal? ': a)) (symbol->string a) a)) (separate-tics (string->symbol ":::(((:)::)(::))")))
-(: : : "(" "(" "(" : ")" : : ")" "(" : : ")" ")")
-
-(define (sanitize-input xeno)
-  (let loop ([xexp (list xeno)])
-    (cond
-     [(null? xexp) '()]
-     [(symbol? xexp) (separate-tics xexp)]
-     []
-|#
+;string -> list
+(define (separate-tics1 tic-sym)
+  (map (lambda (a) 
+	 (if (not (equal? ': a))
+	     (symbol->string (string->symbol (list->string (list a))))
+	     a))
+       (string->list tic-sym)))
 
 (define (separate-tics* ts)
   (cond
@@ -35,6 +28,58 @@
 			   (separate-tics* (cdr ts)))]
    ))
 
+(define (sep xst)
+  (let ([x (string-zip (string-append (string-append "(" xst) ")") " ")])
+    (with-input-from-string x
+      (lambda ()
+	(let ([p (read)])
+	  p #;(separate-tics* p))))))
+
+(define (string-zip sa sb)
+  (let loop ([ind 0] [acc ""])
+    (if (>= ind (string-length sa))
+	acc
+	(loop (+ 1 ind) 
+	      (string-append 
+	       acc
+	       (string-append (list->string (list (string-ref sa ind))) sb)
+	       )))))
+	       
+#|
+
+(separate-tics (string->symbol ":::(((:)::)(::))"))
+(: : : \x28; \x28; \x28; : \x29; : : \x29; \x28; : : \x29;
+   \x29;)
+
+(map (lambda (a) (if (not (equal? ': a)) (symbol->string a) a)) (separate-tics (string->symbol ":::(((:)::)(::))")))
+(: : : "(" "(" "(" : ")" : : ")" "(" : : ")" ")")
+
+|#
+#|
+(define (sanitize-input xstr)
+  (let ([xlst (separate-tics1 xstr)])
+    (fold-right (lambda (a kont) 
+		  (cond
+		   [(equal? ': a) (cons a kont)]
+		   [(equal? "(" a) (cons kont ]
+		   '()
+		   xlst
+    
+(let loop ([x xlst])
+  [(null? x) '()]
+  [(equal? (car x) ':) (cons (car x) (loop (cdr x)))]
+  [(equal? (car x) "(") (cons (cons 
+
+]
+
+(with-input-from-string ":::::(:):" 
+  (lambda () 
+    (let loop ([x (separate (read)] [acc '()]) 
+      (cond 
+       [(
+|#
+
+(define (zeros n) (make-vector n))
 
 ;sieve of eratosthenes
 ;primes [2, n]
@@ -88,19 +133,29 @@
       (list-ref primes-list (- i 1))))
 
 ; ::(:) -> '(: : (:))
-(define (x->a x)
+(define (x->a xexp)
   (cond
-   [(null? x) 1]
-   [(equal? (car x) ':) (* 2 (x->a (cdr x)))]
-   [(null? (cdr x)) (prime-index (x->a (car x)))]
-   [(not (null? (cdr x))) (* (x->a (list (car x))) (x->a (cdr x)))]
+   [(null? xexp) 1]
+   [(equal? (car xexp) ':) (* 2 (x->a (cdr xexp)))]
+   [(null? (cdr xexp)) (prime-index (x->a (car xexp)))]
+   [(not (null? (cdr xexp))) (* (x->a (list (car xexp))) (x->a (cdr xexp)))]
    ))
+
+(define (xeno->arabic xst) (x->a (sep xst)))
+
+#|
+(define (arabic->xeno num)
+  (
+|#
 
 ;integers from n to m inclusive
 (define (range n m)
   (list-tail (iota (+ m 1)) n))
 
 ;tests
-(define (aktst) (x->a1 '((: : : : : : : ((:)) (: : :) (((: :)))))))
+(define (aktst) 
+  (equal? (x->a '((: : : : : : : ((:)) (: : :) (((: :))))))
+	  (xeno->arabic "(:::::::((:))(:::)(((::))))")))
+
 
 
