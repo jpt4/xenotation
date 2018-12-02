@@ -64,7 +64,8 @@
 	    )))
     ))
 
-(define (era2 n)
+;TODO sieve over an interval
+(define (era2 n m)
   (let ([num-vec (list->vector (iota (+ 1 n)))])
     (let inc-loop ([inc 2])
       (if (> inc (floor (sqrt n)))
@@ -82,11 +83,6 @@
     ))
 
 (define primes-list (eratosthenes 1000))
-
-;last element of a list
-(define (last-element ls) (car (last-pair ls)))
-
-(define (square n) (expt n 2))
 
 ;primes are 1-indexed
 (define (prime-index i)
@@ -112,9 +108,15 @@
 
 (define (xeno->arabic xst) (x->a (sep xst)))
 
-(define (arabic->xeno num)
+(define (arabic->xeno num) '())
+  
+(define (a->x num)
   (let ([pls (prime-factors num)])
-    '()))
+    (map (lambda (a)
+	   (if (equal? a 2)
+	       ':
+	       (a->x (rev-prime-index a))))
+	 pls)))	    
 
 (define (prime-factors num)
   (let loop ([n num] [pind 1] [fls '()])
@@ -127,19 +129,36 @@
 	(loop quo pind (cons div fls))]
        [else (loop n (+ 1 pind) fls)]))))
 
+(define (rev-prime-index p) 
+  (if (member p primes-list)
+      (+ (list-index p primes-list) 1)
+      (begin
+	(extend-primes-list p)
+	(rev-prime-index p))))  
+
+(define (list-index e ls) (- (length ls) (length (member e ls))))
+
 ;integers from n to m inclusive
 (define (range n m)
-  (list-tail (iota (+ m 1)) n))
+  (nlist-tail (iota (+ m 1)) n))
 
 (define (zeros n) (make-vector n))
 
 (define (one? n) (equal? 1 n))
 
+;last element of a list
+(define (last-element ls) (car (last-pair ls)))
+
+(define (square n) (expt n 2))
+
+
 ;tests
-(define (aktst) 
+(define (aktst1) 
   (equal? (x->a '((: : : : : : : ((:)) (: : :) (((: :))))))
 	  (xeno->arabic "(:::::::((:))(:::)(((::))))")))
 
+(define (axtst num)
+  (equal? (x->a (a->x num)) num))
 
 
 #|
