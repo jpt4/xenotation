@@ -1,34 +1,13 @@
 ;;xeno.scm
 ;;20181030Z
 ;;jpt4
+;;Chez Scheme v9.5
 ;;xenotation transliterator
+;;arabic <-> {tic, nullified} xenotation
 
 ; :::::: -> '(::::::) : -> '(:) (:) -> '((:))
-
-;symbol -> list
-(define (separate-tics tic-symbol)
-  (map (lambda (a) 
-	 (string->symbol (list->string (list a)))) 
-       (string->list (symbol->string tic-symbol))))
-
-;string -> list
-(define (separate-tics1 tic-sym)
-  (map (lambda (a) 
-	 (if (not (equal? ': a))
-	     (symbol->string (string->symbol (list->string (list a))))
-	     a))
-       (string->list tic-sym)))
-
-(define (separate-tics* ts)
-  (cond
-   [(null? ts) '()]
-   [(symbol? ts) (separate-tics ts)]
-   [(symbol? (car ts)) (cons (separate-tics* (car ts)) (separate-tics* (cdr ts)))]
-   [(pair? (car ts)) (cons (cons (separate-tics* (caar ts)) (separate-tics* (cdar ts)))
-			   (separate-tics* (cdr ts)))]
-   ))
-
-(define (sep xst)
+; ::(:) -> '(: : (:))
+(define (string->xexp xst)
   (let ([x (string-zip (string-append (string-append "(" xst) ")") " ")])
     (with-input-from-string x
       (lambda ()
@@ -97,7 +76,8 @@
       (set! primes-list
 	(eratosthenes new-max))))  
 
-; ::(:) -> '(: : (:))
+;xexp to arabic 
+;'(: : (:)) -> 12
 ; Also does nullary tic-xenotation, () -> '(()) = 2.
 #|
 > (x->a '((())(()())()) )
@@ -117,13 +97,28 @@
    [(not (null? (cdr xexp))) (* (x->a (list (car xexp))) (x->a (cdr xexp)))]
    ))
 
-(define (xeno->arabic xst) (x->a (sep xst)))
+(define (xeno->arabic xst) (x->a (string->xexp xst)))
+
+(define (null-xeno->arabic nxst) (nx->a (string->xexp nxst)))
+
+(define (nx->a nxexp) (x->a nxexp))
 
 (define (arabic->xeno num)
   (let loop ([xexp (a->x num)])
     (cond
      [(null? xexp) ""]
      [(equal? (car xexp) ':) (string-append ":" (loop (cdr xexp)))]
+     [(null? (cdr xexp)) 
+      (string-append (string-append "(" (loop (car xexp))) ")")]
+     [(not (null? (cdr xexp)))
+      (string-append (loop (list (car xexp))) (loop (cdr xexp)))]
+     )))
+
+(define (arabic->null-xeno num)
+  (let loop ([xexp (a->nx num)])
+    (cond
+     [(null? xexp) ""]
+     [(equal? (car xexp) ':) (string-append "()" (loop (cdr xexp)))]
      [(null? (cdr xexp)) 
       (string-append (string-append "(" (loop (car xexp))) ")")]
      [(not (null? (cdr xexp)))
@@ -137,6 +132,14 @@
 	       ':
 	       (a->x (rev-prime-index a))))
 	 pls)))	    
+
+(define (a->nx num)
+  (let ([pls (prime-factors num)])
+    (map (lambda (a)
+	   (if (equal? a 2)
+	       '()
+	       (a->nx (rev-prime-index a))))
+	 pls)))
 
 (define (prime-factors num)
   (let loop ([n num] [pind 1] [fls '()])
@@ -192,6 +195,29 @@
 |#
 
 #|
+
+;symbol -> list
+(define (separate-tics tic-symbol)
+  (map (lambda (a) 
+	 (string->symbol (list->string (list a)))) 
+       (string->list (symbol->string tic-symbol))))
+
+;string -> list
+(define (separate-tics1 tic-sym)
+  (map (lambda (a) 
+	 (if (not (equal? ': a))
+	     (symbol->string (string->symbol (list->string (list a))))
+	     a))
+       (string->list tic-sym)))
+
+(define (separate-tics* ts)
+  (cond
+   [(null? ts) '()]
+   [(symbol? ts) (separate-tics ts)]
+   [(symbol? (car ts)) (cons (separate-tics* (car ts)) (separate-tics* (cdr ts)))]
+   [(pair? (car ts)) (cons (cons (separate-tics* (caar ts)) (separate-tics* (cdar ts)))
+			   (separate-tics* (cdr ts)))]
+   ))
 
 (separate-tics (string->symbol ":::(((:)::)(::))"))
 (: : : \x28; \x28; \x28; : \x29; : : \x29; \x28; : : \x29;
