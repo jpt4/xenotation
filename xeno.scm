@@ -5,6 +5,9 @@
 ;;xenotation transliterator
 ;;arabic <-> {tic, nullified} xenotation
 
+;TODO: Sieve of Eratosthenes over an interval; more complete tests;
+;clean up xeno.scm
+
 ; :::::: -> '(::::::) : -> '(:) (:) -> '((:))
 ; ::(:) -> '(: : (:))
 (define (string->xexp xst)
