@@ -4,7 +4,9 @@ Transliteration between tic-xenotation [0] and Arabic numerals.
 
 [0] hyperstition.abstractdynamics.org/archives/003538.html
 
-Current status: transliterate xeno -> Arabic, not yet the inverse.
+Capabilities:
+
+Transliterate from Arabic to either tic-xenotation numerals and vice-versa
 
 Requirements:
 

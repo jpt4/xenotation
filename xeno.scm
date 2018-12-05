@@ -98,6 +98,17 @@
 	(eratosthenes new-max))))  
 
 ; ::(:) -> '(: : (:))
+; Also does nullary tic-xenotation, () -> '(()) = 2.
+#|
+> (x->a '((())(()())()) )
+42
+> (xeno->arabic "(())(()())()")
+42
+> (x->a '((:) (: :) :) )
+42
+> (xeno->arabic "(:)(::):")
+42
+|#
 (define (x->a xexp)
   (cond
    [(null? xexp) 1]
@@ -108,7 +119,16 @@
 
 (define (xeno->arabic xst) (x->a (sep xst)))
 
-(define (arabic->xeno num) '())
+(define (arabic->xeno num)
+  (let loop ([xexp (a->x num)])
+    (cond
+     [(null? xexp) ""]
+     [(equal? (car xexp) ':) (string-append ":" (loop (cdr xexp)))]
+     [(null? (cdr xexp)) 
+      (string-append (string-append "(" (loop (car xexp))) ")")]
+     [(not (null? (cdr xexp)))
+      (string-append (loop (list (car xexp))) (loop (cdr xexp)))]
+     )))
   
 (define (a->x num)
   (let ([pls (prime-factors num)])
@@ -160,6 +180,16 @@
 (define (axtst num)
   (equal? (x->a (a->x num)) num))
 
+(define (a->atst num)
+  (let ([roundtrip (xeno->arabic (arabic->xeno (x->a (a->x num))))])
+    (display roundtrip)
+    (newline)
+    (equal? roundtrip num)))
+
+#|
+> (xeno->arabic (arabic->xeno (x->a (a->x 84))))
+>  84
+|#
 
 #|
 
