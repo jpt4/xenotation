@@ -70,6 +70,8 @@
 (define (prime-index i)
   (if (> i (length primes-list))
       (begin
+	(display `(extend ,i))
+	(newline)
 	(extend-primes-list (* (last-element primes-list) 2))
 	(prime-index i))
       (list-ref primes-list (- i 1))))
@@ -149,6 +151,7 @@
     (let* ([div (prime-index pind)] 
 	   [quo (/ n div)])
       (cond
+       [(> (last-element primes-list) (floor (sqrt n))) (reverse (cons n fls))]
        [(> div (floor (sqrt n))) (reverse (cons n fls))]
        [(one? quo) (reverse (cons n fls))]
        [(and (integer? quo) (not (one? quo)))
