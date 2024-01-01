@@ -8,7 +8,7 @@
 ;TODO: Sieve of Eratosthenes over an interval; more complete tests;
 ;clean up xeno.scm
 
-; :::::: -> '(::::::) : -> '(:) (:) -> '((:))
+; :::::: -> '(: : : : : :) : -> '(:) (:) -> '((:))
 ; ::(:) -> '(: : (:))
 (define (string->xexp xst)
   (let ([x (string-zip (string-append (string-append "(" xst) ")") " ")])
@@ -67,12 +67,21 @@
 (define primes-list (eratosthenes 1000))
 
 ;primes are 1-indexed
-(define (prime-index i)
+(define (prime-index-old i)
   (if (> i (length primes-list))
       (begin
 	(display `(extend ,i))
 	(newline)
 	(extend-primes-list (* (last-element primes-list) 2))
+	(prime-index i))
+      (list-ref primes-list (- i 1))))
+
+(define (prime-index i)
+  (if (> i (length primes-list))
+      (begin
+	(display `(extend ,i))
+	(newline)
+	(extend-primes-list (+  (last-element primes-list) 2))
 	(prime-index i))
       (list-ref primes-list (- i 1))))
 
@@ -180,6 +189,16 @@
 
 (define (square n) (expt n 2))
 
+(define (diff-between-elem ls)
+  (list-head 
+   (cdr
+    (fold-right 
+     (lambda (l acc) 
+       (let ([diff (- (car acc) l)]) 
+	 (begin (set-car! acc diff) (cons l acc)))) 
+     '(0) 
+     ls))
+   (- (length ls) 2)))
 
 ;tests
 (define (aktst1) 
